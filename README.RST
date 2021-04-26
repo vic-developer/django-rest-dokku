@@ -17,93 +17,31 @@ There are example views and tasks added.
 Quickstart
 ----------
 
-Install django-payments-przelewy24::
+Install pipenv:
 
-    pip install django-payments-przelewy24
+Then run:
 
-Add it to your `INSTALLED_APPS`:
+.. code-block:: bash
 
-.. code-block:: python
+    pipenv shell
+    pipenv install
 
-    from payments_przelewy24.config import Przelewy24Config
+To set up local development we need redis and rabbitmq.
+Install docker if you don't have it.
 
-    PAYMENT_VARIANTS = {
-        "przelewy24": (
-            "payments_przelewy24.provider.Przelewy24Provider",
-            {
-                "config": Przelewy24Config(
-                    pos_id=123,
-                    merchant_id=123,
-                    crc="e34a1",
-                    api_key="d876a3ba780cb",
-                    sandbox=True
-                ),
-            },
-        ),
-    }
+.. code-block:: bash
 
-You can also use environment to configure provider:
+    docker start redis
+    docker run -d -p 5672:5672 rabbitmq
 
-.. code-block:: python
+Then to run a dev server or celery worker:
 
-    from payments_przelewy24.config import Przelewy24Config
+.. code-block:: bash
 
-    # PAYMENTS_P24_POS_ID=123
-    # PAYMENTS_P24_MERCHANT_ID=123
-    # PAYMENTS_P24_CRC=e34a1
-    # PAYMENTS_P24_API_KEY=d876a3ba780cb
-    # PAYMENTS_P24_SANDBOX=1
+    make devserver
+    make worker
 
-    PAYMENT_VARIANTS = {
-        "przelewy24": (
-            "payments_przelewy24.provider.Przelewy24Provider",
-            {
-                "config": Przelewy24Config.from_env(),
-            },
-        ),
-    }
-
-Dokku deployment
+Dokku server deployment
 ----------
 
 test
-
-
-Running Tests
--------------
-
-Does the code actually work?
-
-::
-
-    source <YOURVIRTUALENV>/bin/activate
-    (myenv) $ pip install -r requirements_test.txt
-    (myenv) $ pytest
-
-
-Development commands
----------------------
-
-::
-
-    pip install -r requirements_dev.txt
-    invoke -l
-
-
-Documentation
--------------
-
-* Przelewy24 REST API_
-
-
-Credits
--------
-
-Tools used in rendering this package:
-
-*  Cookiecutter_
-*  `cookiecutter-djangopackage`_
-
-.. _Cookiecutter: https://github.com/audreyr/cookiecutter
-.. _`cookiecutter-djangopackage`: https://github.com/pydanny/cookiecutter-djangopackage
-.. _API: https://developers.przelewy24.pl/index.php
