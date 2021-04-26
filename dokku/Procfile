@@ -1,0 +1,2 @@
+web: uwsgi --chdir=/code --ini=/code/uwsgi.ini
+worker: celery -A api worker --loglevel=INFO

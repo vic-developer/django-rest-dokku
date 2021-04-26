@@ -1,0 +1,7 @@
+{
+  "scripts": {
+    "dokku": {
+      "predeploy": "cd /code/ && python manage.py migrate --noinput && python manage.py collectstatic --noinput"
+    }
+  }
+}

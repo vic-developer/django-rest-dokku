@@ -1,0 +1,31 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+django = "==3.1.7"
+djangorestframework = "==3.12.2"
+django-allauth = ">=0.24.1"
+dj-rest-auth = "==2.1.3"
+mysql = "*"
+httpie = "*"
+install = "*"
+django-extensions = "*"
+pyreadline = "*"
+django-cors-headers = "*"
+celery = "*"
+redis = "*"
+sentry-sdk = "*"
+uwsgi = "*"
+gunicorn = "*"
+whitenoise = "*"
+
+[dev-packages]
+requests = "*"
+openpyxl = "*"
+ipdb = "*"
+ipython = "*"
+
+[requires]
+python_version = "3.8.5"
