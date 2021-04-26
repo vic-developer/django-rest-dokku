@@ -4,14 +4,22 @@ Django Rest Framework + Dokku = single server deployment with easy heroku migrat
 
 
 This is Django Rest Framework adapted to my needs.
-It is integrating Redis + RabbitMQ + MySQL + Celery workers
-There are example views and tasks added.
+It is integrating Redis + RabbitMQ + MySQL + Celery workers.
 
+You can start writing your views, models and tasks, everything will work fine.
+
+Main advantage of this stack is ability to host your application on 10$ server.
+But. Once your traffic increases and you need to handle bigger load you can easily
+migrate to heroku. Those two are compatible.  
 
 Quickstart
 ----------
 
 First install pipenv.
+
+.. code-block:: bash
+
+    pip install pipenv
 
 Then run:
 
@@ -39,7 +47,8 @@ Then to run a dev server or celery worker:
 Dokku server deployment
 ----------
 
-Login to your VPS and run those commands. (read them first though)
+Login to your VPS and run those commands (read them first though).
+
 stolen from: https://www.stavros.io/posts/deploy-django-dokku/
 
 .. code-block:: bash
