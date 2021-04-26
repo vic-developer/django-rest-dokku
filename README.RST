@@ -2,22 +2,16 @@
 Django Rest Framework + Dokku = single server deployment with easy heroku migration
 =============================
 
-.. image:: https://img.shields.io/pypi/v/django-payments-przelewy24
-    :target: https://pypi.org/project/django-payments-przelewy24/
-
-.. image:: https://circleci.com/gh/ar4s/django-payments-przelewy24.svg?style=shield
-    :target: https://circleci.com/gh/ar4s/django-payments-przelewy24
-
 
 This is Django Rest Framework adapted to my needs.
-It is integrating Redis + MySQL + Celery workers
+It is integrating Redis + RabbitMQ + MySQL + Celery workers
 There are example views and tasks added.
 
 
 Quickstart
 ----------
 
-Install pipenv:
+First install pipenv.
 
 Then run:
 
@@ -41,7 +35,45 @@ Then to run a dev server or celery worker:
     make devserver
     make worker
 
+
 Dokku server deployment
 ----------
 
-test
+Login to your VPS and run those commands. (read them first though)
+stolen from: https://www.stavros.io/posts/deploy-django-dokku/
+
+.. code-block:: bash
+    
+    # Replace "yourproject" everywhere with your project's name.
+
+    # Create a container for your project.
+    sudo dokku apps:create yourproject
+
+
+    # Install the postgres plugin (you can skip this if you have done it before).
+    sudo dokku plugin:install https://github.com/dokku/dokku-postgres.git
+
+    # Create a database for your project.
+    sudo dokku postgres:create yourproject-database
+
+
+    # Install the Redis plugin.
+    sudo dokku plugin:install https://github.com/dokku/dokku-redis.git redis
+
+    # Create a Redis instance for your project.
+    sudo dokku redis:create yourproject-redis
+
+    # Link the above instances to your project, this will set up networking
+    # and expose environment variables to your project so you can connect.
+    sudo dokku postgres:link yourproject-database yourproject
+    sudo dokku redis:link yourproject-redis yourproject
+
+    # I generally like setting this variable so my settings file knows to disable
+    # DEBUG and change various other options for running on production.
+
+    # If you don't want the variable to be set globally, just change `--global` to
+    # your project's name.
+    sudo dokku config:set --no-restart --global NODEBUG=1
+
+    # Add other environment variables to taste.
+    sudo dokku config:set --no-restart yourproject SECRET_KEY=somelongkey
