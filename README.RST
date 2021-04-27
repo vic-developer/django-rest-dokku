@@ -4,13 +4,15 @@ Django Rest Framework + Dokku = single server deployment with easy heroku migrat
 
 
 This is Django Rest Framework adapted to my needs.
-It is integrating Redis + RabbitMQ + MySQL + Celery workers.
+It is integrating Redis + RabbitMQ + Postgres + Celery workers.
 
 You can start writing your views, models and tasks, everything will work fine.
 
 Main advantage of this stack is ability to host your application on 10$ server.
 But. Once your traffic increases and you need to handle bigger load you can easily
-migrate to heroku. Those two are compatible.  
+migrate to heroku. Those two are compatible.
+
+On prod statics will be served with Django Whitenoise.
 
 Quickstart
 ----------
@@ -28,13 +30,22 @@ Then run:
     pipenv shell
     pipenv install
 
-To set up local development we need redis and rabbitmq.
+To set up local development we need postgres, redis and rabbitmq.
 Install docker if you don't have it.
 
 .. code-block:: bash
 
-    docker start redis
-    docker run -d -p 5672:5672 rabbitmq
+    sudo docker run --name postgres -e POSTGRES_PASSWORD=postgres -d postgres
+    sudo docker start redis
+    sudo docker run -d -p 5672:5672 rabbitmq
+
+Run migrations:
+
+.. code-block:: bash
+
+    pipenv run python manage.py makemigrations
+    pipenv run python manage.py migrate
+
 
 Then to run a dev server or celery worker:
 
@@ -47,12 +58,14 @@ Then to run a dev server or celery worker:
 Dokku server deployment
 ----------
 
+[You need to install dokku on your sever, or pick ready made digital ocean dokku droplet]
+
 Login to your VPS and run those commands (read them first though).
 
-stolen from: https://www.stavros.io/posts/deploy-django-dokku/
+mostly stolen from: https://www.stavros.io/posts/deploy-django-dokku/
 
 .. code-block:: bash
-    
+
     # Replace "yourproject" everywhere with your project's name.
 
     # Create a container for your project.
@@ -65,6 +78,11 @@ stolen from: https://www.stavros.io/posts/deploy-django-dokku/
     # Create a database for your project.
     sudo dokku postgres:create yourproject-database
 
+    # Install RabbitMQ plugin.
+    sudo dokku plugin:install https://github.com/dokku/dokku-rabbitmq.git rabbitmq
+
+    # Create a RabbitMQ instance for your project.
+    sudo dokku rabbitmq:create yourproject-rabbitmq
 
     # Install the Redis plugin.
     sudo dokku plugin:install https://github.com/dokku/dokku-redis.git redis
@@ -76,6 +94,7 @@ stolen from: https://www.stavros.io/posts/deploy-django-dokku/
     # and expose environment variables to your project so you can connect.
     sudo dokku postgres:link yourproject-database yourproject
     sudo dokku redis:link yourproject-redis yourproject
+    sudo dokku rabbitmq:link yourproject-rabbitmq yourproject
 
     # I generally like setting this variable so my settings file knows to disable
     # DEBUG and change various other options for running on production.

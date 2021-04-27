@@ -200,11 +200,13 @@ if os.environ.get("DATABASE_URL"):
     # Stuff for when running in Dokku.
 
     # Parse the DATABASE_URL env var.
-    USER, PASSWORD, HOST, PORT, NAME = re.match("^mysql://(?P<username>.*?)\:(?P<password>.*?)\@(?P<host>.*?)\:(?P<port>\d+)\/(?P<db>.*?)$", os.environ.get("DATABASE_URL", "")).groups()
+    USER, PASSWORD, HOST, PORT, NAME = re.match(
+        "^postgres://(?P<username>.*?)\:(?P<password>.*?)\@(?P<host>.*?)\:(?P<port>\d+)\/(?P<db>.*?)$",
+         os.environ.get("DATABASE_URL", "")).groups()
 
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.mysql',
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
             'NAME': NAME,
             'USER': USER,
             'PASSWORD': PASSWORD,
@@ -217,27 +219,33 @@ if os.environ.get("DATABASE_URL"):
 
     CELERY_RESULT_BACKEND = os.environ.get("REDIS_URL", "")
 
-    sentry_sdk.init(
-        dsn="", # dsn
-        integrations=[DjangoIntegration()],
+    SENTRY_DSN = os.environ.get("SENTRY_DSN", "")
 
-        # Set traces_sample_rate to 1.0 to capture 100%
-        # of transactions for performance monitoring.
-        # We recommend adjusting this value in production.
-        traces_sample_rate=1.0,
+    if SENTRY_DSN:
+        sentry_sdk.init(
+            dsn=SENTRY_DSN,
+            integrations=[DjangoIntegration()],
 
-        # If you wish to associate users to errors (assuming you are using
-        # django.contrib.auth) you may enable sending PII data.
-        send_default_pii=True
-    )
+            # Set traces_sample_rate to 1.0 to capture 100%
+            # of transactions for performance monitoring.
+            # We recommend adjusting this value in production.
+            traces_sample_rate=1.0,
+
+            # If you wish to associate users to errors (assuming you are using
+            # django.contrib.auth) you may enable sending PII data.
+            send_default_pii=True
+        )
 else:
     print('loading dev!')
+
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'OPTIONS': {
-                'read_default_file': 'api/mysql.env',
-            },
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': "postgres",
+            'USER': 'postgres',
+            'PASSWORD': 'postgres',
+            'HOST': "localhost",
+            'PORT': 5432,
         }
     }
     REDIS_HOST = 'localhost'

@@ -1,5 +1,6 @@
 import datetime
 import os
+import random
 from decimal import Decimal
 from typing import cast
 
@@ -57,7 +58,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 
 @api_view(['GET', 'OPTIONS'])
 @permission_classes([IsAuthenticated])
-def check(request):
+def check_auth(request):
   """
   Need to pass auth token for this endpoint to work.
   """
@@ -67,7 +68,12 @@ def check(request):
 
 
 @api_view(['GET', 'OPTIONS'])
-@permission_classes([IsAdminUser])
+def check(request):
+  return HttpResponse('ok', status=status.HTTP_200_OK)
+
+
+@api_view(['GET', 'OPTIONS'])
+# @permission_classes([IsAdminUser])
 def index(request):
   context = {}
   return render(request, 'index.html', context)
@@ -76,16 +82,16 @@ def index(request):
 # Example schedule a task on the backend
 @api_view(['GET', 'OPTIONS'])
 def trigger_celery_task(request):
-  find_first_user.apply_async(('sending a byte!'))
+  find_first_user.apply_async(('a byte!',))
 
   # other method
-  find_first_user.delay('sending a byte!')
+  find_first_user.delay('a byte!')
 
-  # Schedule for execution at 1AM next day
+  # Schedule execution at 1AM next day
   now = datetime.datetime.utcnow()
   tomorrow = now + datetime.timedelta(1)
   late_night = tomorrow.replace(hour=1, minute=1)
-  find_first_user.apply_async(('im a night owl'), eta=late_night)
+  find_first_user.apply_async(('im a night owl',), eta=late_night)
 
   context = {'msg': 'task scheduled'}
 
@@ -93,27 +99,39 @@ def trigger_celery_task(request):
 
 # Example interacting with redis
 @api_view(['GET', 'OPTIONS'])
-def push_to_redis_array(request, redis_key, redis_val):
-  key = str(redis_key)
-  val = str(redis_val).encode()
+def push_to_redis_array(request):
+  key = "TEST_REDIS"
+
+  val = random.random()
 
   print(val, key)
 
   if val not in redis_instance.lrange(key, 0, -1):
     redis_instance.lpush(key, val)
 
-  return Response(status=status.HTTP_200_OK)
+  data = {'pushed': val, 'key': key}
+
+  return Response(data=data, status=status.HTTP_200_OK)
 
 
 @api_view(['GET', 'OPTIONS'])
-def remove_from_redis_array(request,  redis_key, redis_val):
+def remove_from_redis_array(request):
 
-  key = str(redis_key)
-  val = str(redis_val).encode()
+  key = "TEST_REDIS"
+  l = redis_instance.lrange(key, 0, -1)
 
-  count_removed = redis_instance.lrem(key, 1, val)
+  val = l[0]
+  redis_instance.lrem(key, 1, val)
+  data = {'removed': val, 'key': key}
 
-  if count_removed == 1:
-    return Response(status=status.HTTP_200_OK)
-  elif count_removed == 0:
-    return Response(status=status.HTTP_204_NO_CONTENT)
+  return Response(data=data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET', 'OPTIONS'])
+def redis_list(request):
+
+  key = "TEST_REDIS"
+  l = redis_instance.lrange(key, 0, -1)
+  data = {'values': l, 'key': key}
+
+  return Response(data=data, status=status.HTTP_200_OK)

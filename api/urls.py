@@ -15,11 +15,11 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
-from django.urls import path, include
-from api.core import views
-from rest_framework.urlpatterns import format_suffix_patterns
+from django.urls import include, path
 from django.views.decorators.csrf import csrf_exempt
+from rest_framework.urlpatterns import format_suffix_patterns
 
+from api.core import views
 
 user_detail = views.UserViewSet.as_view({
     'get': 'retrieve',
@@ -34,8 +34,14 @@ urlpatterns = [
     url('auth/', include('dj_rest_auth.urls')),
     url('registration/', include('dj_rest_auth.registration.urls')),
 
-    # User defined
-
+    # Api
+    url('api/check/secured', views.check_auth),
+    url('api/check', views.check),
+    url('api/index', views.index),
+    url('api/test_task', views.trigger_celery_task),
+    url('redis/push', views.push_to_redis_array),
+    url('redis/remove', views.remove_from_redis_array),
+    url('redis/list', views.redis_list),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
