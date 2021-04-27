@@ -58,11 +58,10 @@ Then to run a dev server or celery worker:
 Dokku server deployment
 ----------
 
-[You need to install dokku on your sever, or pick ready made digital ocean dokku droplet]
+[You need to install dokku on your server, or pick ready made digital ocean dokku droplet]
 
 Login to your VPS and run those commands (read them first though).
 
-mostly stolen from: https://www.stavros.io/posts/deploy-django-dokku/
 
 .. code-block:: bash
 
@@ -105,3 +104,9 @@ mostly stolen from: https://www.stavros.io/posts/deploy-django-dokku/
 
     # Add other environment variables to taste.
     sudo dokku config:set --no-restart yourproject SECRET_KEY=somelongkey
+
+
+Credits
+----------
+
+https://www.stavros.io/posts/deploy-django-dokku/
