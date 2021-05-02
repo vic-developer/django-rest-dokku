@@ -19,7 +19,7 @@ sentry-sdk = "*"
 uwsgi = "*"
 gunicorn = "*"
 whitenoise = "*"
-psycopg2 = "*"
+psycopg2-binary = "*"
 ipython = "*"
 
 [dev-packages]

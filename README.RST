@@ -35,8 +35,8 @@ Install docker if you don't have it.
 
 .. code-block:: bash
 
-    sudo docker run --name postgres -e POSTGRES_PASSWORD=postgres -d postgres
-    sudo docker start redis
+    sudo docker run --name postgres -p 5432:5432 -e POSTGRES_PASSWORD=postgres -d postgres
+    sudo docker run -d redis
     sudo docker run -d -p 5672:5672 rabbitmq
 
 Run migrations:
