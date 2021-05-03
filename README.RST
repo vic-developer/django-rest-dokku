@@ -10,7 +10,7 @@ You can start writing your views, models and tasks, everything will work fine.
 
 Main advantage of this stack is ability to host your application on 10$ server.
 But. Once your traffic increases and you need to handle bigger load you can easily
-migrate to heroku. Those two are compatible.
+migrate to heroku. Those two should be compatible. [didn't tested]
 
 On prod statics will be served with Django Whitenoise.
 
