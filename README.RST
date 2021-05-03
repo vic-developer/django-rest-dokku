@@ -30,7 +30,7 @@ Then run:
     pipenv shell
     pipenv install
 
-To set up local development we need postgres, redis and rabbitmq. _Python: http://www.python.org/
+To set up local development we need postgres, redis and rabbitmq. 
 Install _Docker-install: https://docs.docker.com/get-docker/ if you don't have it. 
 
 .. code-block:: bash
