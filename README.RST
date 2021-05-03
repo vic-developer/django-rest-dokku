@@ -106,7 +106,5 @@ Login to your VPS and run those commands (read them first though).
     sudo dokku config:set --no-restart yourproject SECRET_KEY=somelongkey
 
 
-Credits
-----------
-
-https://www.stavros.io/posts/deploy-django-dokku/
+You can also add a domain and generate a SSL certificate.
+See more here -> https://www.stavros.io/posts/deploy-django-dokku/
